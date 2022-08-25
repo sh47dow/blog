@@ -6,25 +6,27 @@ import type Author from '../interfaces/author'
 
 type Props = {
   title: string
-  coverImage: string
-  date: string
+  picture: string
+  created_at: string
   excerpt: string
-  author: Author
+  author: string
   slug: string
 }
 
 const PostPreview = ({
   title,
-  coverImage,
-  date,
+  picture,
+  created_at,
   excerpt,
   author,
   slug,
 }: Props) => {
+    console.log("************post-preview")
+    console.log(created_at)
   return (
     <div>
       <div className="mb-5">
-        <CoverImage slug={slug} title={title} src={coverImage} />
+        <CoverImage slug={slug} title={title} src={picture} />
       </div>
       <h3 className="text-3xl mb-3 leading-snug">
         <Link as={`/posts/${slug}`} href="/posts/[slug]">
@@ -32,10 +34,10 @@ const PostPreview = ({
         </Link>
       </h3>
       <div className="text-lg mb-4">
-        <DateFormatter dateString={date} />
+        <DateFormatter dateString={created_at} />
       </div>
       <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-      <Avatar name={author.name} picture={author.picture} />
+      <Avatar name={author}/>
     </div>
   )
 }
