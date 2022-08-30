@@ -32,6 +32,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               // document.cookie = `_token=${session.access_token}; expires=${session.expires_in}; path=/`;
           } else {
               eraseCookie('_token');
+              router.push('/login');
           }
       })
     }, [])
