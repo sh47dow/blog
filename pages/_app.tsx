@@ -3,56 +3,47 @@ import NextHead from 'next/head'
 import '../styles/index.css'
 import React, {useEffect, useState} from "react";
 import {supabase} from "../utils/supabase";
+import {Session, User} from "@supabase/gotrue-js";
+import {eraseCookie, getCookie, setCookie} from "../utils/cookie";
 import {useRouter} from "next/router";
 
-export const RoleContext = React.createContext<string | undefined>(undefined);
+export const UserContext = React.createContext<User | null>(null);
+// export const SessionContext = React.createContext<Session | null>(null);
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+    const [user, setUser] = useState<User | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const router = useRouter();
-    const [role, setRole] = useState<string | null>(null);
 
     useEffect(() => {
-      fetch('/api/user').then(async res => {
-        if (res.ok) {
-            const user = await res.json()
-            setRole(user.role);
-        }
-      });
-    }, [])
-    useEffect(() => {
-        const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-            debugger;
-            setRole(session?.user.role || null);
-            await fetch('/api/cookie', {
-                method: 'POST',
-                headers: new Headers({ 'Content-Type': 'application/json' }),
-                credentials: 'same-origin',
-                body: JSON.stringify({ event, session }),
-            });
-            if (event === 'SIGNED_IN') {
-                return await router.push('/overview');
+        const token = getCookie('_token')
+        supabase.auth.api.getUser(token).then(({user, error}) => {
+            setUser(user);
+            if (error && error.status === 401) {
+                router.push('/login');
             }
-            await router.push('/login');
-        });
-        return () => data?.unsubscribe();
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const logout = async () => {
-        await supabase.auth.signOut();
-    }
+        })
+    }, [session])
+    useEffect(() => {
+      supabase.auth.onAuthStateChange((event, session) => {
+          setSession(session);
+          if (session) {
+              setCookie('_token', session.access_token, session.expires_in);
+              // document.cookie = `_token=${session.access_token}; expires=${session.expires_in}; path=/`;
+          } else {
+              eraseCookie('_token');
+          }
+      })
+    }, [])
 
   return (
       <>
           <NextHead>
               <meta name='viewport' content='with=device-width, initial-scale=1' />
           </NextHead>
-          <RoleContext.Provider value={role}>
+          <UserContext.Provider value={user}>
             <Component {...pageProps} />
-          </RoleContext.Provider>
-          {role && <button className="fixed bottom-5 right-5 bg-stone-500 text-accent-1 rounded-md px-3 py-2" onClick={logout}>Leave</button>}
-
+          </UserContext.Provider>
       </>
   )
 }

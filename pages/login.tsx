@@ -1,8 +1,7 @@
-import React, {ComponentProps, useState} from "react";
+import React, {ComponentProps, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {supabase} from "../utils/supabase";
-import {GetServerSideProps} from "next";
-import {ApiError} from "@supabase/gotrue-js";
+import {UserContext} from "./_app";
 
 const Login = (props: ComponentProps<any>) => {
     const router = useRouter();
@@ -10,10 +9,16 @@ const Login = (props: ComponentProps<any>) => {
     const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const user = useContext(UserContext);
+    useEffect(() => {
+        if (user) {
+            router.push("/");
+        }
+    }, [user]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
-        return undefined;
+           return undefined;
     }
 
     const handleClickShowPassword = () => {
@@ -43,12 +48,3 @@ const Login = (props: ComponentProps<any>) => {
 }
 
 export default Login
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { user } = await supabase.auth.api.getUserByCookie(context.req);
-    console.log(user)
-    if (user) return { props: {}, redirect: { destination: '/overview', permanent: false } };
-
-    return { props: {} };
-};
-

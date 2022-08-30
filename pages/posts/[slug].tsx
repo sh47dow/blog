@@ -22,7 +22,7 @@ export default function Post({ post, morePosts, preview }: Props) {
   if (!router.isFallback && !post?.id) {
     return <ErrorPage statusCode={404} />
   }
-  console.log(post)
+
   return (
     <Layout preview={preview}>
       <Container>
@@ -67,7 +67,7 @@ export async function getStaticProps({ params }: Params) {
     'content',
     'picture',
   ])
-  const content = await markdownToHtml(post.content || '')
+  const content = await markdownToHtml(post?.content || '')
 
   return {
     props: {
