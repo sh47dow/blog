@@ -38,6 +38,10 @@ curl -X POST '[应用网址]/auth/v1/signup' -H "apikey: [service_role]" -H "Con
 
 使用创建的用户账号密码替换/pages/login.jsx中的登陆账户，修改auth.user表中私人账户角色为admin，游客账户角色为guest。
 
+### 运行环境
+
+推荐node版本v16
+
 ### 运行代码
 
 ```yarn install```
