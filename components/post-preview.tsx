@@ -9,7 +9,7 @@ type Props = {
   picture: string
   created_at: string
   excerpt: string
-  author: string
+  // author: string
   slug: string
 }
 
@@ -18,7 +18,7 @@ const PostPreview = ({
   picture,
   created_at,
   excerpt,
-  author,
+  // author,
   slug,
 }: Props) => {
     console.log("************post-preview")
@@ -37,7 +37,7 @@ const PostPreview = ({
         <DateFormatter dateString={created_at} />
       </div>
       <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-      <Avatar name={author}/>
+      {/*<Avatar name={author}/>*/}
     </div>
   )
 }

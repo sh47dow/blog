@@ -8,25 +8,34 @@ import {eraseCookie, getCookie, setCookie} from "../utils/cookie";
 import {useRouter} from "next/router";
 
 export const UserContext = React.createContext<User | null>(null);
-// export const SessionContext = React.createContext<Session | null>(null);
 
 export default function MyApp({ Component, pageProps }: AppProps) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const router = useRouter();
-
     useEffect(() => {
         const token = getCookie('_token')
-        supabase.auth.api.getUser(token).then(({user, error}) => {
-            setUser(user);
-            if (error && error.status === 401) {
-                router.push('/login');
+        debugger
+        if (token) {
+            supabase.auth.getUser(token).then(({data, error}) => {
+                setUser(data.user);
+                if (router.route.split('/').includes('admin')) {
+                    if (!(data.user && data.user.role === 'authenticated')) {
+                        router.push('/admin/login')
+                    }
+                }
+            })
+        } else {
+            setUser(null)
+            if (router.route.split('/').includes('admin')) {
+                router.push('/admin/login')
             }
-        })
+        }
     }, [session])
     useEffect(() => {
       supabase.auth.onAuthStateChange((event, session) => {
           setSession(session);
+          debugger;
           if (session) {
               setCookie('_token', session.access_token, session.expires_in);
               // document.cookie = `_token=${session.access_token}; expires=${session.expires_in}; path=/`;

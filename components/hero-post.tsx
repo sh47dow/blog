@@ -9,7 +9,7 @@ type Props = {
   picture: string
   content: string
   excerpt: string
-  author: string
+  // author: string
   slug: string
 }
 
@@ -18,7 +18,7 @@ const HeroPost = ({
   picture,
   content,
   excerpt,
-  author,
+  // author,
   slug,
 }: Props) => {
   console.log(content)

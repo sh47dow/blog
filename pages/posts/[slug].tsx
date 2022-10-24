@@ -32,16 +32,10 @@ export default function Post({ post, morePosts, preview }: Props) {
         ) : (
           <>
             <article className="mb-32">
-              <Head>
-                <title>
-                  {post.title} | 我的博客
-                </title>
-              </Head>
               <PostHeader
                 title={post.title}
                 picture={post.picture}
                 created_at={post.created_at}
-                author={post.author}
               />
               <PostBody content={post.content} />
             </article>
@@ -63,7 +57,7 @@ export async function getStaticProps({ params }: Params) {
     'title',
     'created_at',
     'id',
-    'author',
+    // 'author',
     'content',
     'picture',
   ])
@@ -76,6 +70,7 @@ export async function getStaticProps({ params }: Params) {
         content,
       },
     },
+    revalidate: 60,
   }
 }
 
@@ -90,6 +85,6 @@ export async function getStaticPaths() {
         },
       }
     }),
-    fallback: false,
+    fallback: 'blocking',
   }
 }

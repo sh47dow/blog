@@ -20,7 +20,7 @@ export default function Index({ allPosts }: Props) {
       <>
         <Layout>
           <Head>
-            <title>流水账</title>
+            <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
           </Head>
           <Container>
             <Intro />
@@ -29,7 +29,7 @@ export default function Index({ allPosts }: Props) {
                     title={heroPost.title}
                     picture={heroPost.picture}
                     content={heroPost.created_at}
-                    author={heroPost.author}
+                    // author={heroPost.author}
                     slug={heroPost.id}
                     excerpt={heroPost.excerpt}
                 />
@@ -46,7 +46,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     'title',
     'created_at',
     'id',
-    'author',
+    // 'author',
     'picture',
     'excerpt',
   ])
@@ -54,5 +54,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     props: {
       allPosts,
     },
+    revalidate: 60,
   }
 }
